@@ -1,19 +1,22 @@
-import express = require("express")
-import jwt = require("jsonwebtoken")
+import express from 'express'
+import jwt from 'jsonwebtoken'
+import {ITokenRequest} from './interfaces'
 
 const app = express()
 const PORT = 3000
 const SECRET = "mySuperSecret"
 
+//middlewares
+app.use( express.json() )
+app.use( express.urlencoded({extended : false}))
+
 app.get("/", function (req, res) {
     res.status(200).json({ messaje: "You are at /" })
 })
 
-app.get("/api/login", function (req, res) {
+app.post("/api/login", function (req, res) {
     const user = {
-        id: 1,
-        name: "Tom",
-        surname: "Hanks",
+        email: req.body.email,
     }
     const response: any = {}
     jwt.sign(user, SECRET, {expiresIn: '1d'}, (error, token) => {
@@ -29,22 +32,17 @@ app.get("/api/login", function (req, res) {
 })
 
 app.get("/api/resource", verifyToken, function (req: ITokenRequest, res) {
-    jwt.verify(<string>req.token, SECRET, (error, authDate) => {
+    jwt.verify(<string>req.body.token, SECRET, (error, authData) => {
         if (error) {
             return res.status(403).json({ messaje: "Forbidden" })
         }
         const response = {
-            authDate,
+            authData,
             messaje: "You are authorized",
-            token: req.token,
         }
         return res.status(200).json(response)
     })
 })
-
-interface ITokenRequest extends express.Request {
-    token?: string
-}
 
 function verifyToken(
     req: ITokenRequest,
@@ -54,7 +52,7 @@ function verifyToken(
     const authHeader = req.headers.authorization
     if (authHeader !== undefined) {
         const bearerToken = authHeader.split(" ")[1]
-        req.token = bearerToken
+        req.body.token = bearerToken
         next()
     } else {
         return res.status(403).json({ messaje: "Forbidden" })
