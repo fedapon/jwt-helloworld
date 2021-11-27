@@ -3,7 +3,10 @@ class UserEntity {
     private _username: String = ''
     private _passwordHashed: String = ''
 
-    constructor() {}
+    constructor(username: String, password: String) {
+        this._username = username
+        this._passwordHashed = password
+    }
 
     public setId (id: Number) {
         this._id = id
