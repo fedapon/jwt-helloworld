@@ -5,10 +5,8 @@ export default class userRepository {
     private _nextId : number = 0
     
     constructor () {
-        let userAdmin = new UserEntity()
+        let userAdmin = new UserEntity('admin','admin')
         userAdmin.setId( this.getNewId() )
-        userAdmin.setUsername('admin')
-        userAdmin.setPassword('admin')
         this._database.push(userAdmin)
     }
 
@@ -16,17 +14,16 @@ export default class userRepository {
         return ++this._nextId
     }
 
-    public find () : UserEntity{
-        const user = new UserEntity()
-        return user
+    public findByUsername (username: String) : UserEntity{
+        const userFound = this._database.find( (user)=>{
+            return (user.getUsername()==username)
+        })
+        return userFound as UserEntity
     }
-    public findById () : UserEntity{
-        const user = new UserEntity()
+    public create (user : UserEntity) : UserEntity{
+        user.setId(this.getNewId())
+        this._database.push(user)
         return user
-    }
-    public create (user : UserEntity) : Number{
-        
-        return 1
     }
     public update () {}
 
