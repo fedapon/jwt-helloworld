@@ -41,7 +41,7 @@ Finally the server will be running on http://localhost:3000/ (unless you change 
 
 
 
-### Reference libraries used in the challenge:
+### Reference libraries used in this implementation:
 
 expressjs - https://expressjs.com/en/5x/api.html
 
